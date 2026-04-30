@@ -1,16 +1,3 @@
-# JSDTN2508资料汇总
-## 基础模块笔记链接
-https://d1ibml5ydvp.feishu.cn/wiki/GkC7w4Wscimlw5ktD8OckPcAnQb
-## 项目模块笔记链接
-https://d1ibml5ydvp.feishu.cn/wiki/MVUMwnf4FiPa4qk7CXQcsyAHnce
-## SRE模块笔记链接
-https://d1ibml5ydvp.feishu.cn/wiki/Alm4wHHSxiQKF4kNYsLcYrZenQc
-## AI应用文档
-https://d1ibml5ydvp.feishu.cn/wiki/HYjdwhBa6i4WjukdXtTcYPQbnPc
-## Gitee仓库地址
-https://gitee.com/cxyPaoPao/jsd2508-3-project1-teacher.git
-
-# 其它
 ## MDN文档
 https://developer.mozilla.org/zh-CN/
 ## 产品原型网
