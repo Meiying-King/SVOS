@@ -139,3 +139,47 @@ const saveGeofence = () => {
 <style scoped>
 
 </style>
+
+<!--<template>-->
+<!--  <div style="height: 6vh;background-color:#fff;padding:10px 20px;">-->
+<!--    <span style="line-height:60px;font-size:20px;">新增围栏</span>-->
+<!--    <el-button type="primary" style="float:right;margin-top:13px;"-->
+<!--               @click="router.push('/geofence')">返回</el-button>-->
+<!--  </div>-->
+<!--  <div id="mapContainer" style="width:100%;height:84vh;"></div>-->
+<!--</template>-->
+<!--<script setup>-->
+<!--  import router from "@/router";-->
+<!--  import {nextTick, onMounted} from "vue";-->
+<!--  import { DrawScene, DrawControl } from 'bmap-draw';-->
+<!--//一进到页面立即加载地图-->
+<!--onMounted(()=>{-->
+<!--  //表示DOM更新完毕后立即执行的方法,因为我们要确保上方的地图容器div已创建,才能往div里装地图-->
+<!--  nextTick(()=>{-->
+<!--    //创建地图实例,注意:忽略导入语句!不需要导入!-->
+<!--    let map = new BMapGL.Map("mapContainer");-->
+<!--    //设置地图展示的中心点,此处的坐标是天安门的经纬度-->
+<!--    let point = new BMapGL.Point(116.4074, 39.9024);-->
+<!--    //设置地图对象的中心点与缩放级别-->
+<!--    map.centerAndZoom(point, 15);-->
+
+<!--    // 添加鼠标绘制控件-->
+<!--    const scene = new DrawScene(map);-->
+<!--    const drawContrl = new DrawControl(scene, {-->
+<!--      enableTips: false,-->
+<!--      anchor: BMAP_ANCHOR_TOP_RIGHT,-->
+<!--      drawingItems: [-->
+<!--        'marker',-->
+<!--        'polyline',-->
+<!--        'polygon',-->
+<!--        'circle',-->
+<!--        'rectangle'-->
+<!--      ]-->
+<!--    });-->
+<!--    map.addControl(drawContrl);-->
+<!--  })-->
+<!--})-->
+<!--</script>-->
+
+<!--<style scoped>-->
+<!--</style>-->
