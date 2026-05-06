@@ -1,27 +1,14 @@
-# JSDTN2508资料汇总
-## 基础模块笔记链接
-https://d1ibml5ydvp.feishu.cn/wiki/GkC7w4Wscimlw5ktD8OckPcAnQb
-## 项目模块笔记链接
-https://d1ibml5ydvp.feishu.cn/wiki/MVUMwnf4FiPa4qk7CXQcsyAHnce
-## SRE模块笔记链接
-https://d1ibml5ydvp.feishu.cn/wiki/Alm4wHHSxiQKF4kNYsLcYrZenQc
-## AI应用文档
-https://d1ibml5ydvp.feishu.cn/wiki/HYjdwhBa6i4WjukdXtTcYPQbnPc
-## Gitee仓库地址
-https://gitee.com/cxyPaoPao/jsd2508-3-project1-teacher.git
+## Skills Stack:
+  ##### Java 17 + Spring Framwork 6. + Spring Boot 6.2.7 + Spring Boot 3.3.3 + Mysql + MyBatis + Vue3 + Element Plus
+## Project Description:
+  ##### With the popularization of new energy vehicles in China, the company provides new energy vehicle leasing services. The platform realizes enterprise-level scheduling and management of vehicle information and user vehicle usage, monitors real-time vehicle data, and achieves effective vehicle utilization and cost control.
+## Project Modules:
+  ##### The project consists of seven core modules: User Module, Vehicle Module, Electronic Fence Module, Vehicle Application Module, Approval Module, Dictionary Module, and Dictionary Item Module.
+## Personal Responsibilities:
+  ##### 1. Vehicle Module：Managed vehicle status and information, including real-time data updates and status tracking.
+  ##### 2. Electronic Fence Module：Designed the electronic fence functionality, and managed vehicle trajectory monitoring and alarm information.
+  ##### 3. Vehicle Application Module：.Implemented the internal vehicle allocation process, including employee application submission. Designed a two-level approval workflow (with single approver fallback for lower-level leaders) and displayed application status to requesters.
+  ##### 4. Approval Module：Developed the approval workflow for leaders to approve or reject applications from subordinates, and implemented system logic to update approval status based on reviewers'decisions.
+  ##### 5. Electronic Fence Module：Designed the electronic fence functionality, and managed vehicle trajectory monitoring and alarm information.
 
-# 其它
-## MDN文档
-https://developer.mozilla.org/zh-CN/
-## 产品原型网
-https://www.axureshop.com/
-## Element-Plus官网
-https://element-plus.org/zh-CN/
-## Trae集成开发工具下载网址
-https://www.trae.cn/?utm_source=training&utm_medium=CPA_hogwarts&utm_campaign=danei2%C2%A0
-## 流程图 思维导图绘制工具
-https://www.processon.com/
-## 百度地图绘制指引
-https://lbsyun.baidu.com/index.php?title=jspopularGL/guide/helloworld
-## 鼠标控件绘制控件
-https://lbsyun.baidu.com/bmap-draw/example/control/draw-control
+    
