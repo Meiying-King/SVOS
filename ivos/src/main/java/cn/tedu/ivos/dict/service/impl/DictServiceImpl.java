@@ -1,5 +1,6 @@
 package cn.tedu.ivos.dict.service.impl;
 
+import cn.tedu.ivos.base.response.PageData;
 import cn.tedu.ivos.dict.mapper.DictMapper;
 import cn.tedu.ivos.dict.pojo.dto.DictQuery;
 import cn.tedu.ivos.dict.pojo.dto.DictSaveParam;
@@ -20,12 +21,12 @@ public class DictServiceImpl implements DictService {
     @Autowired
     DictMapper dictMapper;
 
-    @Override
-    public List<DictVO> selectDict(DictQuery dictQuery) {
-        log.debug("查询字典业务,参数:{}",dictQuery);
-        List<DictVO> list = dictMapper.selectDict(dictQuery);
-        return list;
-    }
+//    @Override
+//    public List<DictVO> selectDict(DictQuery dictQuery) {
+//        log.debug("查询字典业务,参数:{}",dictQuery);
+//        List<DictVO> list = dictMapper.selectDict(dictQuery);
+//        return list;
+//    }
 
     @Override
     public void saveDict(DictSaveParam dictSaveParam) {
@@ -50,5 +51,15 @@ public class DictServiceImpl implements DictService {
         dict.setStatus("0");
         dict.setUpdateTime(new Date());
         dictMapper.update(dict);
+    }
+
+    @Override
+    public PageData selectDict(DictQuery dictQuery) {
+        //根据条件查询当前页DictVO集合
+        List<DictVO> list = dictMapper.selectDict(dictQuery);
+        PageData pageData = new PageData();
+        pageData.setList(list);
+        pageData.setTotal(dictMapper.selectDictCount(dictQuery));
+        return pageData;
     }
 }

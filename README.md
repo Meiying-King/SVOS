@@ -11,4 +11,5 @@
   ##### 4. Approval Module：Developed the approval workflow for leaders to approve or reject applications from subordinates, and implemented system logic to update approval status based on reviewers'decisions.
   ##### 5. Electronic Fence Module：Designed the electronic fence functionality, and managed vehicle trajectory monitoring and alarm information.
 
+
     

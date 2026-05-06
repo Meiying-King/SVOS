@@ -43,6 +43,18 @@
         </template>
       </el-table-column>
     </el-table>
+
+    <div style="margin: 30px; float: right">
+      <el-pagination
+          layout="prev, pager, next, jumper"
+          :page-sizes="[5, 10, 15, 20]"
+          v-model:current-page="currentPage"
+          v-model:page-size="currentSize"
+          v-model:total="total"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+      />
+    </div>
   </el-card>
 
   <!-- 保存字典弹窗 -->
@@ -76,20 +88,47 @@ import router from "@/router";
 const searchForm = ref({name:'',code:''});
 //定义数组用来保存查出来的字典表格数据
 const dictArr = ref([]);
+
+onMounted(()=>{
+  selectDict();
+})
+
+// 定义变量保存分页器的当前页数
+const currentPage = ref(1);
+//定义变量保存分页器的每页显示多少条
+const currentSize = ref(5);
+//定义变量保存数据总条目数
+const total = ref(100);
+//修改每页显示多少条，触发此函数
+const handleSizeChange = (val) => {
+  console.log("每页展示"+val+'条数据')
+  selectDict();
+}
+//修改当前页码，触发此函数
+const handleCurrentChange = (val) => {
+  console.log('当前的页数为：' + val);
+  selectDict();
+}
+
 //定义搜索字典的方法
 const selectDict = () => {
+  //第一步:查询数据之前需要把当前页码以及每页显示多少条传给服务器
+  searchForm.value.pageSize = currentSize.value;
+  searchForm.value.pageNum = currentPage.value;
   let data = qs.stringify(searchForm.value);
   axios.get(BASE_URL+'/v1/dict/select?'+data).then((response)=>{
     if (response.data.code === 2000){
-      dictArr.value = response.data.data;
+      console.log('查看PageData返回的数据:')
+      console.log(response.data)
+      // dictArr.value = response.data.data;
+      dictArr.value = response.data.data.list; //所以要多加一层list
+      total.value = response.data.data.total; //设置总条目数
     }else {
       ElMessage.error(response.data.message);
     }
   })
 }
-onMounted(()=>{
-  selectDict();
-})
+
 //定义重置搜索的方法
 const resetSearch = () => {
   searchForm.value = {};//清空搜索条件
@@ -138,7 +177,9 @@ const editDict = (id) => {
   dialogTitle.value = '编辑字典';
   axios.get(BASE_URL+'/v1/dict/select?id='+id).then((response)=>{
     if (response.data.code === 2000){
-      saveDictForm.value = response.data.data[0];
+      // saveDictForm.value = response.data.data[0];
+      //注意！！！返回值现在多了一层list,记得改成list[0]
+      saveDictForm.value = response.data.data.list[0];
     }else{
       ElMessage.error(response.data.message);
     }

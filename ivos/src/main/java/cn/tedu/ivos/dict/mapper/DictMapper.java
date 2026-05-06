@@ -14,4 +14,6 @@ public interface DictMapper {
     void insert(Dict dict);
 
     void update(Dict dict);
+
+    Integer selectDictCount(DictQuery dictQuery);
 }

@@ -1,6 +1,7 @@
 package cn.tedu.ivos.dict.controller;
 
 import cn.tedu.ivos.base.response.JsonResult;
+import cn.tedu.ivos.base.response.PageData;
 import cn.tedu.ivos.dict.pojo.dto.DictQuery;
 import cn.tedu.ivos.dict.pojo.dto.DictSaveParam;
 import cn.tedu.ivos.dict.pojo.vo.DictVO;
@@ -28,8 +29,9 @@ public class DictController {
     @GetMapping("select")
     public JsonResult selectDict(DictQuery dictQuery){
         log.debug("查询字典,参数:{}",dictQuery);
-        List<DictVO> list = dictService.selectDict(dictQuery);
-        return JsonResult.ok(list);
+//        List<DictVO> list = dictService.selectDict(dictQuery);
+        PageData data=dictService.selectDict(dictQuery);
+        return JsonResult.ok(data);
     }
 
     @Operation(summary = "保存字典")
