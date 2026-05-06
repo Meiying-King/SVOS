@@ -10,6 +10,5 @@
   ##### 3. Vehicle Application Module：.Implemented the internal vehicle allocation process, including employee application submission. Designed a two-level approval workflow (with single approver fallback for lower-level leaders) and displayed application status to requesters.
   ##### 4. Approval Module：Developed the approval workflow for leaders to approve or reject applications from subordinates, and implemented system logic to update approval status based on reviewers'decisions.
   ##### 5. Electronic Fence Module：Designed the electronic fence functionality, and managed vehicle trajectory monitoring and alarm information.
-## Running effect:
-  ##### 1. Vehicle Module:
-    <img width="1911" height="932" alt="image" src="https://github.com/user-attachments/assets/c29cab72-a802-4d8e-8db8-aed39e22e79f" />
+
+    
