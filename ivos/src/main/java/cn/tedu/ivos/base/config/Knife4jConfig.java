@@ -25,7 +25,7 @@ public class Knife4jConfig {
                 .title("IVOS API DOC")
                 .description("智慧车辆运营管理系统接口文档")
                 .version("1.0.0")
-                .contact(new Contact().name("程晓宇"));
+                .contact(new Contact().name("乔明阳（英文：Mingyang Qiao）"));
     }
     //定义Tag顺序
     private List<Tag> getTagsOrdered() {
