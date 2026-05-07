@@ -1,12 +1,14 @@
 package cn.tedu.ivos.dict.service.impl;
 
 import cn.tedu.ivos.base.response.PageData;
+import cn.tedu.ivos.base.util.CacheUtils;
 import cn.tedu.ivos.dict.mapper.DictMapper;
 import cn.tedu.ivos.dict.pojo.dto.DictQuery;
 import cn.tedu.ivos.dict.pojo.dto.DictSaveParam;
 import cn.tedu.ivos.dict.pojo.entity.Dict;
 import cn.tedu.ivos.dict.pojo.vo.DictVO;
 import cn.tedu.ivos.dict.service.DictService;
+import cn.tedu.ivos.dictoption.mapper.DictOptionMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,9 @@ import java.util.List;
 public class DictServiceImpl implements DictService {
     @Autowired
     DictMapper dictMapper;
+
+    @Autowired
+    CacheUtils cacheUtils;
 
 //    @Override
 //    public List<DictVO> selectDict(DictQuery dictQuery) {
@@ -50,7 +55,17 @@ public class DictServiceImpl implements DictService {
         dict.setId(id);
         dict.setStatus("0");
         dict.setUpdateTime(new Date());
+
+        DictQuery dictQuery = new DictQuery();
+        dictQuery.setId(id);
+        List<DictVO> dictVOList = dictMapper.selectDict(dictQuery);
+        if(dictVOList!=null && dictVOList.size()>0){
+            DictVO dictVO = dictVOList.get(0);
+            //根据dict的code删除之前的redis缓存
+            cacheUtils.delete("dictOption"+dictVO.getCode());
+        }
         dictMapper.update(dict);
+
     }
 
     @Override
