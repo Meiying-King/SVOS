@@ -89,16 +89,113 @@
       </el-header>
       <!-- 右侧主体内容  -->
       <el-main style="height: 90vh;padding: 0;overflow-y: auto;">
-        <!--  里面是可变区域(各个子组件) -->
+        <!--  里面是可变区域 (各个子组件) -->
         <router-view/>
       </el-main>
+      <!-- 智能客服小图标 - 半隐藏在右边缘 -->
+      <el-button
+          v-show="!visibleDrawer"
+          type="info"
+          circle
+          class="chat-icon-button"
+          :class="{ 'chat-icon-show': isChatIconVisible }"
+          style="position: fixed;right: -40px; bottom: 200px; z-index: 9999; width: 64px; height: 64px; transition: right 0.3s ease;"
+          size="1000px"
+          @mouseenter="isChatIconVisible = true"
+          @mouseleave="isChatIconVisible = false"
+          @click="CustommerChat"
+      >
+        <el-icon :size="40"><ChatDotRound /></el-icon>
+      </el-button>
     </div>
   </div>
+
+  <!-- 智能客服对话抽屉 -->
+  <el-drawer
+      v-model="visibleDrawer"
+      direction="rtl"
+      :before-close="handleClose"
+      size="33%"
+      :with-header="true"
+  >
+    <template #header>
+      <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+        <span style="font-size: 18px; font-weight: bold;">智能客服</span>
+      </div>
+    </template>
+    
+    <!-- 对话消息列表 -->
+    <div class="chat-container">
+      <div class="message-list" ref="messageListRef">
+        <div 
+          v-for="(msg, index) in messageList" 
+          :key="index" 
+          :class="['message-item', msg.role === 'user' ? 'message-user' : 'message-bot']"
+        >
+          <div class="message-avatar">
+            <el-avatar 
+              v-if="msg.role === 'bot'" 
+              src="/imgs/admin/logo.png" 
+              :size="40"
+            />
+            <el-avatar 
+              v-else 
+              :size="40"
+            >
+              <el-icon><User /></el-icon>
+            </el-avatar>
+          </div>
+          <div class="message-content">
+            <div class="message-bubble">
+              {{ msg.content }}
+            </div>
+            <div class="message-time">
+              {{ msg.time }}
+            </div>
+          </div>
+        </div>
+        <!-- 加载中提示 -->
+        <div v-if="isLoading" class="message-item message-bot">
+          <div class="message-avatar">
+            <el-avatar src="/imgs/admin/logo.png" :size="40" />
+          </div>
+          <div class="message-content">
+            <div class="message-bubble loading">
+              <span class="dot">正在输入</span>
+              <span class="dots">...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 输入框区域 -->
+      <div class="input-area">
+        <el-input
+          v-model="userMessage"
+          type="textarea"
+          :rows="3"
+          placeholder="请输入您的问题..."
+          @keydown.enter.prevent="sendMessage"
+          :disabled="isSending"
+        />
+        <el-button 
+          type="primary" 
+          @click="sendMessage" 
+          :disabled="!userMessage.trim() || isSending"
+          style="width: 100%; margin-top: 10px;"
+        >
+          发送
+        </el-button>
+      </div>
+    </div>
+  </el-drawer>
 </template>
 
 <script setup>
-import {onMounted, ref} from "vue";
+import {onMounted, ref, nextTick} from "vue";
 import {useRoute, useRouter} from "vue-router";
+import axios from "axios";
+import { ElMessage } from "element-plus";
 
 //定义变量用来控制左侧菜单栏是否折叠
 const isCollapse = ref(false);
@@ -115,7 +212,7 @@ const logout = ()=>{
     localStorage.removeItem('user');
     //跳转到登录页
     window.location.href = '/login';
-    //还需要把已经取出来的user对象清空
+    //还需要把已经取出来的 user 对象清空
     user.value = '';
   }
 }
@@ -155,8 +252,258 @@ router.beforeEach((to, from, next) => {
 })
 
 
+// 弹出抽屉
+const visibleDrawer=ref(false);
+// 控制图标是否显示完整
+const isChatIconVisible = ref(false);
+
+// 定义智能客服对话
+const CustommerChat = () => {
+  visibleDrawer.value=true;
+  // 打开抽屉时如果没有消息，添加欢迎语
+  if (messageList.value.length === 0) {
+    addMessage('bot', '您好，我是智能客服助手，请问有什么可以帮您？');
+  }
+}
+
+// 关闭对话
+const handleClose = () => {
+  visibleDrawer.value=false;
+}
+
+// 消息列表
+const messageList = ref([]);
+// 用户输入
+const userMessage = ref('');
+// 是否正在发送
+const isSending = ref(false);
+// 是否正在加载
+const isLoading = ref(false);
+// 消息列表容器引用
+const messageListRef = ref(null);
+
+// 添加消息
+const addMessage = (role, content) => {
+  const now = new Date();
+  const time = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+  messageList.value.push({
+    role,
+    content,
+    time
+  });
+  // 滚动到底部
+  nextTick(() => {
+    scrollToBottom();
+  });
+};
+
+// 滚动到底部
+const scrollToBottom = () => {
+  if (messageListRef.value) {
+    messageListRef.value.scrollTop = messageListRef.value.scrollHeight;
+  }
+};
+
+// 发送消息
+const sendMessage = async () => {
+  if (!userMessage.value.trim() || isSending.value) {
+    return;
+  }
+
+  const message = userMessage.value.trim();
+  userMessage.value = '';
+  
+  // 添加用户消息
+  addMessage('user', message);
+  isSending.value = true;
+  isLoading.value = true;
+
+  try {
+    // 先添加机器人消息占位
+    addMessage('bot', '');
+    
+    // 使用 EventSource 接收 SSE 流
+    await fetchStream(message);
+    
+    isLoading.value = false;
+  } catch (error) {
+    console.error('发送消息失败:', error);
+    ElMessage.error('消息发送失败，请稍后重试');
+    // 移除失败的消息占位
+    messageList.value.pop();
+    addMessage('bot', '抱歉，暂时无法连接到智能客服，请稍后重试。');
+    isLoading.value = false;
+  } finally {
+    isSending.value = false;
+  }
+};
+
+// 处理流式响应
+const fetchStream = async (message) => {
+  return new Promise((resolve, reject) => {
+    const url = `${BASE_URL}/ai/chat?userMessage=${encodeURIComponent(message)}`;
+    const eventSource = new EventSource(url);
+    let accumulatedContent = '';
+    let hasReceivedData = false;
+
+    eventSource.onmessage = (event) => {
+      hasReceivedData = true;
+      accumulatedContent += event.data;
+      // 更新最后一条消息的内容
+      const botMessageIndex = messageList.value.length - 1;
+      if (messageList.value[botMessageIndex]) {
+        messageList.value[botMessageIndex].content = accumulatedContent;
+        scrollToBottom();
+      }
+    };
+
+    eventSource.onerror = (error) => {
+      console.error('SSE 错误:', error);
+      eventSource.close();
+      
+      // 如果已经接收到数据，则认为成功
+      if (hasReceivedData && accumulatedContent) {
+        resolve(accumulatedContent);
+      } else {
+        reject(new Error('连接失败'));
+      }
+    };
+  });
+};
+
+
 
 
 
 
 </script>
+
+<style scoped>
+/* 聊天图标按钮样式 */
+.chat-icon-button:hover {
+  right: 0 !important;
+}
+
+.chat-icon-show {
+  right: 0 !important;
+}
+
+/* 聊天容器 */
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 80px);
+  padding: 20px;
+}
+
+/* 消息列表 */
+.message-list {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 20px;
+  padding-right: 5px;
+}
+
+/* 消息项 */
+.message-item {
+  display: flex;
+  margin-bottom: 20px;
+  align-items: flex-start;
+}
+
+.message-user {
+  flex-direction: row-reverse;
+}
+
+/* 消息头像 */
+.message-avatar {
+  flex-shrink: 0;
+  margin: 0 10px;
+}
+
+/* 消息内容 */
+.message-content {
+  display: flex;
+  flex-direction: column;
+  max-width: 70%;
+}
+
+.message-user .message-content {
+  align-items: flex-end;
+}
+
+/* 消息气泡 */
+.message-bubble {
+  padding: 12px 16px;
+  border-radius: 8px;
+  background-color: #f0f0f0;
+  color: #333;
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+
+.message-user .message-bubble {
+  background-color: #409EFF;
+  color: #fff;
+}
+
+/* 消息时间 */
+.message-time {
+  font-size: 12px;
+  color: #999;
+  margin-top: 5px;
+}
+
+/* 加载动画 */
+.message-bubble.loading {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.dot {
+  display: inline-block;
+}
+
+.dots {
+  display: inline-block;
+  animation: ellipsis 1.5s infinite;
+}
+
+@keyframes ellipsis {
+  0%, 20% {
+    content: '.';
+  }
+  40%, 60% {
+    content: '..';
+  }
+  80%, 100% {
+    content: '...';
+  }
+}
+
+/* 输入区域 */
+.input-area {
+  border-top: 1px solid #e0e0e0;
+  padding-top: 15px;
+}
+
+/* 滚动条样式 */
+.message-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.message-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.message-list::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.message-list::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+</style>
